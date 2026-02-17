@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum StockCategory {
+  NOVO
+  USADO
+  DEFEITO_PARCIAL
+}
+
+enum ExitType {
+  VENDA
+  APLICADO
+}
+
+model StockItem {
+  id          String   @id @default(cuid())
+  sku         String?  @unique
+  name        String
+  supplierSku String?  @map("supplier")
+  manufacturer String?
+  description String?
+  unit        String?
+  unitPrice   Float?
+  category    StockCategory @default(NOVO)
+  itemQuantity Int     @default(0) @map("minQuantity")
+  initialQuantity Int   @default(0)
+  entriesQuantity Int   @default(0)
+  quantity    Int      @default(0)
+  lastEntryAt DateTime?
+  location    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  exits       StockExit[]
+
+  @@index([name])
+}
+
+model StockExit {
+  id          String   @id @default(cuid())
+  itemId      String
+  item        StockItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantity    Int
+  type        ExitType
+  obra        String?
+  exitDate    DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([itemId])
+  @@index([exitDate])
+}
+
+enum ToolStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  LOST
+}
+
+model ToolEquipment {
+  id           String     @id @default(cuid())
+  code         String?    @unique
+  name         String
+  description  String?
+  serialNumber String?
+  status       ToolStatus @default(AVAILABLE)
+  assignedTo   String?
+  assignedAt   DateTime?
+  notes        String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([name])
+  @@index([status])
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  INACTIVE
+}
+
+model Vehicle {
+  id        String        @id @default(cuid())
+  plate     String        @unique
+  brand     String?
+  model     String?
+  year      Int?
+  odometer  Int           @default(0)
+  status    VehicleStatus @default(AVAILABLE)
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status])
+}
