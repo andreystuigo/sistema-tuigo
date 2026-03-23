@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function StockLocationFilter({
   locations,
@@ -13,16 +12,10 @@ export default function StockLocationFilter({
   basePath?: string;
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [value, setValue] = useState(selected ?? "");
-
-  useEffect(() => {
-    setValue(selected ?? "");
-  }, [selected]);
+  const value = selected ?? "";
 
   function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const newValue = event.target.value;
-    setValue(newValue);
 
     if (newValue) {
       router.push(`${basePath}?loc=${encodeURIComponent(newValue)}`);

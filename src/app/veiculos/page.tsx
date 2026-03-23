@@ -3,21 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { deleteVehicle } from "./actions";
 import type { Vehicle } from "@prisma/client";
 
-function statusLabel(status: Vehicle["status"]) {
-  switch (status) {
-    case "AVAILABLE":
-      return "Disponível";
-    case "IN_USE":
-      return "Em uso";
-    case "MAINTENANCE":
-      return "Manutenção";
-    case "INACTIVE":
-      return "Inativo";
-    default:
-      return status;
-  }
-}
-
 export default async function VeiculosPage() {
   const vehicles: Vehicle[] = await prisma.vehicle.findMany({
     orderBy: [{ plate: "asc" }],
@@ -29,15 +14,31 @@ export default async function VeiculosPage() {
         <div className="space-y-1">
           <h1 className="text-xl font-semibold tracking-tight">Veículos</h1>
           <p className="text-sm text-zinc-700">
-            Cadastro básico e status de disponibilidade.
+            Cadastro básico de veículos.
           </p>
         </div>
-        <Link
-          className="inline-flex items-center justify-center rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
-          href="/veiculos/novo"
-        >
-          Novo veículo
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            href="/veiculos/saida"
+          >
+            Saída
+          </Link>
+
+          <Link
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            href="/veiculos/entrada"
+          >
+            Entrada
+          </Link>
+
+          <Link
+            className="inline-flex items-center justify-center rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            href="/veiculos/novo"
+          >
+            Novo veículo
+          </Link>
+        </div>
       </div>
 
       {vehicles.length === 0 ? (
@@ -60,7 +61,7 @@ export default async function VeiculosPage() {
               <tr>
                 <th className="px-4 py-3 font-medium">Placa</th>
                 <th className="px-4 py-3 font-medium">Veículo</th>
-                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Tag Veicular</th>
                 <th className="px-4 py-3 font-medium">Odômetro</th>
                 <th className="px-4 py-3 font-medium">
                   <span className="sr-only">Ações</span>
@@ -83,10 +84,10 @@ export default async function VeiculosPage() {
                       "—"
                     )}
                   </td>
+                  <td className="px-4 py-3 text-zinc-700">{vehicle.tag ?? "—"}</td>
                   <td className="px-4 py-3 text-zinc-700">
-                    {statusLabel(vehicle.status)}
+                    {vehicle.odometer}
                   </td>
-                  <td className="px-4 py-3 text-zinc-700">{vehicle.odometer}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
                       <Link

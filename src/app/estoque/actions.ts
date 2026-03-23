@@ -58,6 +58,7 @@ function getEntryDateRequired(formData: FormData) {
 }
 
 export async function createStockItem(formData: FormData) {
+  const location = getRequired(formData, "location");
   const name = getRequired(formData, "name");
   const sku = getOptional(formData, "sku");
   const supplierSku = getOptional(formData, "supplierSku");
@@ -66,16 +67,16 @@ export async function createStockItem(formData: FormData) {
   const unit = getOptional(formData, "unit");
   const unitPrice = getOptionalFloat(formData, "unitPrice");
   const category = parseCategory(getRequired(formData, "category"));
-  const itemQuantity = Math.max(0, getInt(formData, "itemQuantity", 0));
-  const launchType = getLaunchType(formData);
-  const launchQuantity = Math.max(0, getInt(formData, "launchQuantity", 0));
-  const location = getRequired(formData, "location");
 
-  const initialQuantity = launchType === "INITIAL" ? launchQuantity : 0;
-  const entriesQuantity = launchType === "ENTRY" ? launchQuantity : 0;
-  const lastEntryAt = launchType === "ENTRY" ? getEntryDateRequired(formData) : null;
+  const entryDate = getEntryDateRequired(formData);
+  const quantity = Math.max(0, getInt(formData, "quantity", 0));
+  if (quantity <= 0) throw new Error("Quantidade inválida");
 
-  const quantity = initialQuantity + entriesQuantity;
+  const initialQuantity = quantity;
+  const entriesQuantity = 0;
+  const lastEntryAt = entryDate;
+
+  const createdAt = new Date(`${String(formData.get("entryDate") ?? "").trim()}T12:00:00`);
 
   await prisma.stockItem.create({
     data: {
@@ -87,12 +88,13 @@ export async function createStockItem(formData: FormData) {
       unit,
       unitPrice,
       category,
-      itemQuantity,
+      itemQuantity: 0,
       initialQuantity,
       entriesQuantity,
       quantity,
       lastEntryAt,
       location,
+      ...(Number.isNaN(createdAt.getTime()) ? {} : { createdAt }),
     },
   });
 

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Controle de Ativos",
-  description: "Sistema básico para controle de estoque, equipamentos/ferramentas e veículos.",
+  description: "Sistema básico para controle de materiais, equipamentos/ferramentas e veículos.",
 };
 
 export default function RootLayout({
@@ -36,7 +36,7 @@ export default function RootLayout({
                   Controle de Ativos
                 </span>
                 <span className="hidden text-sm text-zinc-600 sm:inline">
-                  Estoque • Ferramentas • Veículos
+                  Materiais • Ferramentas • Veículos
                 </span>
               </div>
 
@@ -51,7 +51,7 @@ export default function RootLayout({
                   className="rounded-md px-3 py-2 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
                   href="/estoque"
                 >
-                  Estoque
+                  Materiais
                 </Link>
                 <Link
                   className="rounded-md px-3 py-2 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"

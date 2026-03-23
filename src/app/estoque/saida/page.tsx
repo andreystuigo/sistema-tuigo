@@ -11,10 +11,9 @@ export default async function SaidaEstoquePage() {
   return (
     <div className="space-y-5">
       <div className="space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight">Saída de Estoque</h1>
+        <h1 className="text-xl font-semibold tracking-tight">Saída de Materiais</h1>
         <p className="text-sm text-zinc-700">Registre uma saída/retirada de item.</p>
       </div>
-
       <form action={registerStockExit} className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-1 sm:col-span-2">

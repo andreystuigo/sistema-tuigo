@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { VehicleStatus } from "@prisma/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,21 +24,14 @@ export async function PATCH(
     brand?: string | null;
     model?: string | null;
     year?: number | null;
+    tag?: string | null;
     odometer?: number | null;
-    status?: VehicleStatus | null;
     notes?: string | null;
   };
 
   if (body?.plate != null && !String(body.plate).trim()) {
     return NextResponse.json({ error: "Campo inválido: plate" }, { status: 400 });
   }
-
-  const status =
-    body.status != null
-      ? Object.prototype.hasOwnProperty.call(VehicleStatus, body.status)
-        ? body.status
-        : VehicleStatus.AVAILABLE
-      : undefined;
 
   const updated = await prisma.vehicle.update({
     where: { id },
@@ -54,13 +46,13 @@ export async function PATCH(
           : body.year === null
             ? null
             : undefined,
+      tag: body.tag != null ? String(body.tag).trim() || null : undefined,
       odometer:
         body.odometer != null && Number.isFinite(body.odometer)
           ? Math.max(0, Math.trunc(body.odometer))
           : body.odometer === null
             ? 0
             : undefined,
-      status,
       notes: body.notes != null ? String(body.notes).trim() || null : undefined,
     },
   });

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { VehicleStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { updateVehicle } from "../../actions";
 
@@ -30,7 +29,7 @@ export default async function EditarVeiculoPage({
         action={action}
         className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4"
       >
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
           <label className="space-y-1">
             <span className="text-sm font-medium">Placa *</span>
             <input
@@ -42,17 +41,12 @@ export default async function EditarVeiculoPage({
           </label>
 
           <label className="space-y-1">
-            <span className="text-sm font-medium">Status</span>
-            <select
-              name="status"
-              defaultValue={vehicle.status}
+            <span className="text-sm font-medium">Modelo</span>
+            <input
+              name="model"
+              defaultValue={vehicle.model ?? ""}
               className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            >
-              <option value={VehicleStatus.AVAILABLE}>Disponível</option>
-              <option value={VehicleStatus.IN_USE}>Em uso</option>
-              <option value={VehicleStatus.MAINTENANCE}>Manutenção</option>
-              <option value={VehicleStatus.INACTIVE}>Inativo</option>
-            </select>
+            />
           </label>
 
           <label className="space-y-1">
@@ -60,15 +54,6 @@ export default async function EditarVeiculoPage({
             <input
               name="brand"
               defaultValue={vehicle.brand ?? ""}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
-
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Modelo</span>
-            <input
-              name="model"
-              defaultValue={vehicle.model ?? ""}
               className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
             />
           </label>
@@ -94,7 +79,17 @@ export default async function EditarVeiculoPage({
             />
           </label>
 
-          <label className="space-y-1 sm:col-span-2">
+          <label className="space-y-1">
+            <span className="text-sm font-medium">Tag Veicular</span>
+            <input
+              name="tag"
+              defaultValue={vehicle.tag ?? ""}
+              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              placeholder="Opcional"
+            />
+          </label>
+
+          <label className="space-y-1 sm:col-span-3">
             <span className="text-sm font-medium">Observações</span>
             <textarea
               name="notes"

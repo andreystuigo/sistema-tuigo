@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteStockItem } from "../actions";
-import type { StockItem } from "@prisma/client";
+import type { Prisma, StockItem } from "@prisma/client";
 import { returnPathForLocation, STOCK_LOCATIONS } from "../stockLocations";
 import StockFilters from "./StockFilters";
 
@@ -23,7 +23,7 @@ export default async function StockList({
   categoria?: string;
   showFilter?: boolean;
 }) {
-  const where: any = {};
+  const where: Prisma.StockItemWhereInput = {};
 
   if (location) where.location = location;
   if (produto) where.name = { contains: produto };
@@ -81,6 +81,7 @@ export default async function StockList({
 
       {showFilter ? (
         <StockFilters
+          key={`${location ?? ""}|${produto ?? ""}|${categoria ?? ""}`}
           selectedLocation={location}
           selectedProduto={produto}
           selectedCategoria={categoria}
@@ -137,7 +138,7 @@ export default async function StockList({
                     <td className="px-4 py-3 text-zinc-700">
                       {item.category === "USADO"
                         ? "Usado"
-                        : (item.category as any) === "DEFEITO_PARCIAL"
+                        : item.category === "DEFEITO_PARCIAL"
                           ? "Defeito parcial"
                           : "Novo"}
                     </td>

@@ -26,6 +26,7 @@ export async function PATCH(
     description?: string | null;
     serialNumber?: string | null;
     status?: ToolStatus | null;
+    inUseWhere?: string | null;
     assignedTo?: string | null;
     notes?: string | null;
   };
@@ -40,6 +41,17 @@ export async function PATCH(
         ? body.status
         : ToolStatus.AVAILABLE
       : undefined;
+
+  const nextInUseWhere =
+    status === undefined
+      ? body.inUseWhere != null
+        ? String(body.inUseWhere).trim() || null
+        : undefined
+      : status === ToolStatus.IN_USE
+        ? body.inUseWhere != null
+          ? String(body.inUseWhere).trim() || null
+          : null
+        : null;
 
   const assignedTo =
     body.assignedTo != null ? String(body.assignedTo).trim() || null : undefined;
@@ -58,6 +70,7 @@ export async function PATCH(
           ? String(body.serialNumber).trim() || null
           : undefined,
       status,
+      inUseWhere: nextInUseWhere,
       assignedTo,
       assignedAt: assignedTo === undefined ? undefined : assignedTo ? new Date() : null,
       notes: body.notes != null ? String(body.notes).trim() || null : undefined,

@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     description?: string | null;
     serialNumber?: string | null;
     status?: ToolStatus | null;
+    inUseWhere?: string | null;
     assignedTo?: string | null;
     notes?: string | null;
   };
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
       description: body.description ? String(body.description).trim() : null,
       serialNumber: body.serialNumber ? String(body.serialNumber).trim() : null,
       status,
+      inUseWhere: status === ToolStatus.IN_USE ? (body.inUseWhere ? String(body.inUseWhere).trim() : null) : null,
       assignedTo: body.assignedTo ? String(body.assignedTo).trim() : null,
       assignedAt: body.assignedTo ? new Date() : null,
       notes: body.notes ? String(body.notes).trim() : null,

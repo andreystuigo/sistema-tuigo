@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { STOCK_LOCATIONS } from "../stockLocations";
 
 const CATEGORIES = ["NOVO", "USADO", "DEFEITO_PARCIAL"] as const;
@@ -24,12 +24,6 @@ export default function StockFilters({
   const [local, setLocal] = useState(selectedLocation ?? "");
   const [produto, setProduto] = useState(selectedProduto ?? "");
   const [categoria, setCategoria] = useState(selectedCategoria ?? "");
-
-  useEffect(() => {
-    setLocal(selectedLocation ?? "");
-    setProduto(selectedProduto ?? "");
-    setCategoria(selectedCategoria ?? "");
-  }, [selectedLocation, selectedProduto, selectedCategoria]);
 
   function buildUrl() {
     const params = new URLSearchParams();

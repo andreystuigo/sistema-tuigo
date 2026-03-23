@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ToolStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { updateTool } from "../../actions";
+import { TOOL_LOCATIONS, isToolLocation } from "../../toolLocations";
+
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
 
 export default async function EditarFerramentaPage({
   params,
@@ -13,6 +18,12 @@ export default async function EditarFerramentaPage({
 
   const tool = await prisma.toolEquipment.findUnique({ where: { id } });
   if (!tool) notFound();
+
+  const defaultLocation = isToolLocation(tool.location) ? tool.location : "Tuigo";
+
+  const defaultDate = tool.lastEntryAt
+    ? new Date(tool.lastEntryAt).toISOString().slice(0, 10)
+    : new Date(tool.createdAt).toISOString().slice(0, 10);
 
   async function action(formData: FormData) {
     "use server";
@@ -30,75 +41,116 @@ export default async function EditarFerramentaPage({
         action={action}
         className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4"
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Produto *</span>
-            <input
-              name="name"
-              required
-              defaultValue={tool.name}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-4">
+            <label className="space-y-1 sm:col-span-3">
+              <span className="text-sm font-medium">Produto *</span>
+              <input
+                name="name"
+                required
+                defaultValue={tool.name}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Código</span>
-            <input
-              name="code"
-              defaultValue={tool.code ?? ""}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Fabricante</span>
+              <input
+                name="manufacturer"
+                defaultValue={tool.manufacturer ?? ""}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="Opcional"
+              />
+            </label>
+          </div>
 
-          <label className="space-y-1 sm:col-span-2">
-            <span className="text-sm font-medium">Descrição</span>
-            <textarea
-              name="description"
-              defaultValue={tool.description ?? ""}
-              className="min-h-20 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Data *</span>
+              <input
+                name="entryDate"
+                type="date"
+                required
+                defaultValue={defaultDate}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Nº de série</span>
-            <input
-              name="serialNumber"
-              defaultValue={tool.serialNumber ?? ""}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Quantidade *</span>
+              <input
+                name="quantity"
+                type="text"
+                inputMode="numeric"
+                required
+                defaultValue={tool.quantity ?? 0}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Status</span>
-            <select
-              name="status"
-              defaultValue={tool.status}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            >
-              <option value={ToolStatus.AVAILABLE}>Disponível</option>
-              <option value={ToolStatus.IN_USE}>Em uso</option>
-              <option value={ToolStatus.MAINTENANCE}>Manutenção</option>
-              <option value={ToolStatus.LOST}>Perdida</option>
-            </select>
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Valor</span>
+              <input
+                name="unitPrice"
+                type="text"
+                inputMode="decimal"
+                defaultValue={tool.unitPrice == null ? "" : currencyFormatter.format(tool.unitPrice)}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="R$ 0,00"
+              />
+            </label>
+          </div>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Responsável</span>
-            <input
-              name="assignedTo"
-              defaultValue={tool.assignedTo ?? ""}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">SKU Tuigo</span>
+              <input
+                name="sku"
+                defaultValue={tool.code ?? ""}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
 
-          <label className="space-y-1 sm:col-span-2">
-            <span className="text-sm font-medium">Observações</span>
-            <textarea
-              name="notes"
-              defaultValue={tool.notes ?? ""}
-              className="min-h-20 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">SKU Fornecedor</span>
+              <input
+                name="supplierSku"
+                defaultValue={tool.supplierSku ?? ""}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Localização *</span>
+              <select
+                name="location"
+                required
+                defaultValue={defaultLocation}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              >
+                {TOOL_LOCATIONS.map((l) => (
+                  <option key={l.slug} value={l.value}>
+                    {l.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Categoria</span>
+              <select
+                name="category"
+                defaultValue={tool.category ?? "NOVO"}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              >
+                <option value="NOVO">Novo</option>
+                <option value="USADO">Usado</option>
+                <option value="DEFEITO_PARCIAL">Defeito parcial</option>
+              </select>
+            </label>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

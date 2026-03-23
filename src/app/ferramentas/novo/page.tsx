@@ -1,6 +1,14 @@
 import Link from "next/link";
-import { ToolStatus } from "@prisma/client";
 import { createTool } from "../actions";
+import { TOOL_LOCATIONS } from "../toolLocations";
+
+function todayISO() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
 
 export default function NovaFerramentaPage() {
   return (
@@ -14,75 +22,114 @@ export default function NovaFerramentaPage() {
         action={createTool}
         className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4"
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Produto *</span>
-            <input
-              name="name"
-              required
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Ex.: Furadeira"
-            />
-          </label>
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-4">
+            <label className="space-y-1 sm:col-span-3">
+              <span className="text-sm font-medium">Produto *</span>
+              <input
+                name="name"
+                required
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="Ex.: Furadeira"
+              />
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Código</span>
-            <input
-              name="code"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Opcional"
-            />
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Fabricante</span>
+              <input
+                name="manufacturer"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="Opcional"
+              />
+            </label>
+          </div>
 
-          <label className="space-y-1 sm:col-span-2">
-            <span className="text-sm font-medium">Descrição</span>
-            <textarea
-              name="description"
-              className="min-h-20 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Opcional"
-            />
-          </label>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Data *</span>
+              <input
+                name="entryDate"
+                type="date"
+                required
+                defaultValue={todayISO()}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Nº de série</span>
-            <input
-              name="serialNumber"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Opcional"
-            />
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Quantidade *</span>
+              <input
+                name="quantity"
+                type="text"
+                inputMode="numeric"
+                required
+                defaultValue={1}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Status</span>
-            <select
-              name="status"
-              defaultValue={ToolStatus.AVAILABLE}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            >
-              <option value={ToolStatus.AVAILABLE}>Disponível</option>
-              <option value={ToolStatus.IN_USE}>Em uso</option>
-              <option value={ToolStatus.MAINTENANCE}>Manutenção</option>
-              <option value={ToolStatus.LOST}>Perdida</option>
-            </select>
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Valor</span>
+              <input
+                name="unitPrice"
+                type="text"
+                inputMode="decimal"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="R$ 0,00"
+              />
+            </label>
+          </div>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Responsável</span>
-            <input
-              name="assignedTo"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Opcional"
-            />
-          </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">SKU Tuigo</span>
+              <input
+                name="sku"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="Opcional"
+              />
+            </label>
 
-          <label className="space-y-1 sm:col-span-2">
-            <span className="text-sm font-medium">Observações</span>
-            <textarea
-              name="notes"
-              className="min-h-20 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Opcional"
-            />
-          </label>
+            <label className="space-y-1">
+              <span className="text-sm font-medium">SKU Fornecedor</span>
+              <input
+                name="supplierSku"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="Opcional"
+              />
+            </label>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Localização *</span>
+              <select
+                name="location"
+                required
+                defaultValue="Tuigo"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              >
+                {TOOL_LOCATIONS.map((l) => (
+                  <option key={l.slug} value={l.value}>
+                    {l.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Categoria</span>
+              <select
+                name="category"
+                defaultValue="NOVO"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              >
+                <option value="NOVO">Novo</option>
+                <option value="USADO">Usado</option>
+                <option value="DEFEITO_PARCIAL">Defeito parcial</option>
+              </select>
+            </label>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

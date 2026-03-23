@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import SaidasFilters from "./SaidasFilters";
+import { ExitType, Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -18,7 +19,7 @@ export default async function SaidasReportPage({
 }) {
   const params = await searchParams;
 
-  const where: any = {};
+  const where: Prisma.StockExitWhereInput = {};
 
   // Filtro por produto (itemId)
   if (params?.produto) {
@@ -26,15 +27,18 @@ export default async function SaidasReportPage({
   }
 
   // Filtro por data início
+  const exitDate: Prisma.DateTimeFilter = {};
   if (params?.dataInicio) {
-    const dataInicio = new Date(`${params.dataInicio}T00:00:00`);
-    where.exitDate = { ...where.exitDate, gte: dataInicio };
+    exitDate.gte = new Date(`${params.dataInicio}T00:00:00`);
   }
 
   // Filtro por data fim
   if (params?.dataFim) {
-    const dataFim = new Date(`${params.dataFim}T23:59:59`);
-    where.exitDate = { ...where.exitDate, lte: dataFim };
+    exitDate.lte = new Date(`${params.dataFim}T23:59:59`);
+  }
+
+  if (exitDate.gte || exitDate.lte) {
+    where.exitDate = exitDate;
   }
 
   // Filtro por obra
@@ -44,7 +48,9 @@ export default async function SaidasReportPage({
 
   // Filtro por tipo
   if (params?.tipo) {
-    where.type = params.tipo;
+    if (params.tipo === ExitType.VENDA || params.tipo === ExitType.APLICADO) {
+      where.type = params.tipo;
+    }
   }
 
   const saidas = await prisma.stockExit.findMany({

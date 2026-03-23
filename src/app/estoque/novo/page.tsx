@@ -1,7 +1,10 @@
 import { createStockItem } from "../actions";
 import Link from "next/link";
 import { locationFromSlug, slugFromValue, STOCK_LOCATIONS } from "../stockLocations";
-import StockLaunchFields from "../_components/StockLaunchFields";
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 export default function NovoItemEstoquePage({
   searchParams,
@@ -15,31 +18,13 @@ export default function NovoItemEstoquePage({
     <div className="space-y-5">
       <div className="space-y-1">
         <h1 className="text-xl font-semibold tracking-tight">Novo item</h1>
-        <p className="text-sm text-zinc-700">Cadastro de item de estoque.</p>
+        <p className="text-sm text-zinc-700">Cadastro de material.</p>
       </div>
 
       <form action={createStockItem} className="space-y-4 rounded-lg border border-zinc-200 bg-white p-4">
-        <div className="grid gap-4 sm:grid-cols-4">
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Localização *</span>
-            <select
-              name="location"
-              required
-              defaultValue={preselected}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            >
-              {STOCK_LOCATIONS.map((loc) => (
-                <option key={loc.slug} value={loc.value}>
-                  {loc.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <StockLaunchFields defaultType="INITIAL" />
-
-          <div className="grid gap-4 sm:col-span-4 sm:grid-cols-5">
-            <label className="space-y-1 sm:col-span-2">
+        <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-4">
+            <label className="space-y-1 sm:col-span-3">
               <span className="text-sm font-medium">Produto *</span>
               <input
                 name="name"
@@ -49,6 +34,62 @@ export default function NovoItemEstoquePage({
               />
             </label>
 
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Fabricante</span>
+              <input
+                name="manufacturer"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="Opcional"
+              />
+            </label>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-4">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Data *</span>
+              <input
+                name="entryDate"
+                type="date"
+                required
+                defaultValue={todayISO()}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Quantidade *</span>
+              <input
+                name="quantity"
+                type="text"
+                inputMode="numeric"
+                required
+                defaultValue={1}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              />
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Unidade</span>
+              <input
+                name="unit"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="Ex.: un, kg"
+              />
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Valor</span>
+              <input
+                name="unitPrice"
+                type="text"
+                inputMode="decimal"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+                placeholder="R$ 0,00"
+              />
+            </label>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
             <label className="space-y-1">
               <span className="text-sm font-medium">SKU Tuigo</span>
               <input
@@ -66,62 +107,38 @@ export default function NovoItemEstoquePage({
                 placeholder="Opcional"
               />
             </label>
-
-            <label className="space-y-1">
-              <span className="text-sm font-medium">Preço Unitário</span>
-              <input
-                name="unitPrice"
-                type="text"
-                inputMode="decimal"
-                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-                placeholder="R$ 0,00"
-              />
-            </label>
           </div>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Categoria</span>
-            <select
-              name="category"
-              defaultValue="NOVO"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            >
-              <option value="NOVO">Novo</option>
-              <option value="USADO">Usado</option>
-              <option value="DEFEITO_PARCIAL">Defeito parcial</option>
-            </select>
-          </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Localização *</span>
+              <select
+                name="location"
+                required
+                defaultValue={preselected}
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              >
+                {STOCK_LOCATIONS.map((loc) => (
+                  <option key={loc.slug} value={loc.value}>
+                    {loc.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Quantidade</span>
-            <input
-              name="itemQuantity"
-              type="text"
-              inputMode="numeric"
-              defaultValue={0}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-            />
-          </label>
-
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Unidade</span>
-            <input
-              name="unit"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Ex.: un, kg"
-            />
-          </label>
-
-          <label className="space-y-1">
-            <span className="text-sm font-medium">Fabricante</span>
-            <input
-              name="manufacturer"
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
-              placeholder="Opcional"
-            />
-          </label>
-
-          
+            <label className="space-y-1">
+              <span className="text-sm font-medium">Categoria</span>
+              <select
+                name="category"
+                defaultValue="NOVO"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+              >
+                <option value="NOVO">Novo</option>
+                <option value="USADO">Usado</option>
+                <option value="DEFEITO_PARCIAL">Defeito parcial</option>
+              </select>
+            </label>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

@@ -73,14 +73,56 @@ model ToolEquipment {
   description  String?
   serialNumber String?
   status       ToolStatus @default(AVAILABLE)
+  inUseWhere   String?
   assignedTo   String?
   assignedAt   DateTime?
   notes        String?
+  supplierSku  String?
+  manufacturer String?
+  unit         String?
+  unitPrice    Float?
+  category     StockCategory @default(NOVO)
+  minQuantity  Int        @default(0)
+  initialQuantity Int     @default(0)
+  entriesQuantity Int     @default(0)
+  quantity     Int        @default(0)
+  lastEntryAt  DateTime?
+  location     String     @default("Tuigo")
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
+  exits        ToolExit[]
+  returns      ToolReturn[]
+
   @@index([name])
   @@index([status])
+}
+
+model ToolExit {
+  id        String        @id @default(cuid())
+  toolId    String
+  tool      ToolEquipment @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  quantity  Int
+  destination String?
+  exitDate  DateTime      @default(now())
+  notes     String?
+  createdAt DateTime      @default(now())
+
+  @@index([toolId])
+  @@index([exitDate])
+}
+
+model ToolReturn {
+  id        String        @id @default(cuid())
+  toolId    String
+  tool      ToolEquipment @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  quantity  Int
+  returnDate DateTime     @default(now())
+  notes     String?
+  createdAt DateTime      @default(now())
+
+  @@index([toolId])
+  @@index([returnDate])
 }
 
 enum VehicleStatus {
@@ -96,11 +138,43 @@ model Vehicle {
   brand     String?
   model     String?
   year      Int?
+  tag       String?
   odometer  Int           @default(0)
   status    VehicleStatus @default(AVAILABLE)
   notes     String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
+  exits     VehicleExit[]
+  entries   VehicleEntry[]
+
   @@index([status])
+}
+
+model VehicleExit {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  odometer    Int
+  destination String?
+  exitDate    DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([vehicleId])
+  @@index([exitDate])
+}
+
+model VehicleEntry {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  odometer    Int
+  destination String?
+  entryDate   DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([vehicleId])
+  @@index([entryDate])
 }

@@ -30,7 +30,7 @@ export default async function Home() {
           Sistema de Controle
         </h1>
         <p className="max-w-2xl text-sm text-zinc-700">
-          Esboço básico para controle de estoque, equipamentos/ferramentas e
+          Esboço básico para controle de materiais, equipamentos/ferramentas e
           veículos. Estrutura pensada para ser simples, consistente e fácil de
           evoluir.
         </p>
@@ -38,7 +38,7 @@ export default async function Home() {
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Resumo">
         <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <div className="text-sm font-medium text-zinc-700">Estoque</div>
+          <div className="text-sm font-medium text-zinc-700">Materiais</div>
           <div className="mt-1 text-2xl font-semibold tracking-tight">
             {stockTotal}
           </div>
@@ -91,7 +91,7 @@ export default async function Home() {
           className="rounded-lg border border-zinc-200 bg-white p-4 hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
           href="/estoque"
         >
-          <div className="text-base font-medium">Estoque</div>
+          <div className="text-base font-medium">Materiais</div>
           <div className="mt-1 text-sm text-zinc-600">
             Itens, lançamentos, categoria e localização.
           </div>

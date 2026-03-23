@@ -19,7 +19,7 @@ export default async function EstoqueIndexPage({
 
   return (
     <StockList
-      title="Controle de Estoque"
+      title="Controle de Materiais"
       location={selectedLocation}
       produto={produtoParam}
       categoria={categoriaParam}
