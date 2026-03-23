@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteStockItem } from "../actions";
-import type { Prisma, StockItem } from "@prisma/client";
+import { StockCategory, type Prisma, type StockItem } from "@prisma/client";
 import { returnPathForLocation, STOCK_LOCATIONS } from "../stockLocations";
 import StockFilters from "./StockFilters";
 
@@ -27,7 +27,12 @@ export default async function StockList({
 
   if (location) where.location = location;
   if (produto) where.name = { contains: produto };
-  if (categoria) where.category = categoria;
+  if (categoria) {
+    const trimmed = categoria.trim();
+    if ((Object.values(StockCategory) as string[]).includes(trimmed)) {
+      where.category = trimmed as StockCategory;
+    }
+  }
 
   const items: StockItem[] = await prisma.stockItem.findMany({
     where: Object.keys(where).length > 0 ? where : undefined,
